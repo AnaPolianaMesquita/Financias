@@ -4,166 +4,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metas</title>
+    <title>Metas Financeiras</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/metas.css') }}">
 </head>
 
 <body>
-    
     <div class="container">
-        
-    
-        <!-- Formulário para projeção financeira -->
-        <div class="form-block" id="projecao">
-            <h1>Projeção de Reserva Financeira</h1>
-            <ul>
+        <div class="form-block">
+            <h1>Projeção Financeira</h1>
+            <ul class="info-list">
                 <li>Defina sua meta financeira</li>
                 <li>Determine quanto deseja economizar</li>
-                <li>Veja sua projeção de saldo</li>
+                <li>Visualize sua projeção de saldo</li>
             </ul>
-    
             <div class="form-group">
-                <label for="valor">Qual valor você quer reservar?</label>
+                <label for="valor">Quanto deseja reservar?</label>
                 <input type="number" id="valor" placeholder="Digite o valor" step="0.01">
             </div>
             <div class="form-group">
-                <label for="periodo">Escolha a unidade do valor:</label>
+                <label for="periodo">Unidade do valor:</label>
                 <select id="periodo">
                     <option value="mes">Mensal</option>
                     <option value="ano">Anual</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="anos">Em quanto tempo você deseja projetar?</label>
-                <input type="number" id="anos" placeholder="Digite o número de acordo com a unidade de valor escolhida" min="1">
+                <label for="anos">Por quanto tempo?</label>
+                <input type="number" id="anos" placeholder="Digite o período" min="1">
             </div>
-    
-            <button class="button" onclick="calcularProjecao()">Calcular Projeção</button>
-    
-            <div class="result" id="resultado" style="display: none;">
+            <button class="button" onclick="calcularProjecao()">Calcular</button>
+            <div class="result" id="resultado" style="display:none;">
                 <p><strong>Projeção de saldo:</strong></p>
                 <p id="valorResultado"></p>
             </div>
-    
-            <button class="button" onclick="window.history.back()">
-                Voltar
-                <i class="fas fa-chevron-left"></i>
+            <button class="button voltar" onclick="window.history.back()">
+                <i class="fas fa-chevron-left"></i> Voltar
             </button>
         </div>
-      
-        <!-- Bloco para adicionar metas -->
-        <div class="metas-block" id="metas">
+
+        <div class="metas-block">
             <h1>Minhas Metas</h1>
-            <div class="popup" id="popupAdicionarMeta">
-                <div class="adicionar-meta">
-                    <span class="close-icon" onclick="fecharPopup()">X</span>
-                    <h2 id="modal_titulo">Adicionar Nova Meta</h2>
-                    <form onsubmit="return adicionarMeta()">
-                        <input type="hidden" id="modal_meta_id" name="meta_id" value="">
-        
-                        <label for="metaNome">Qual é sua meta?</label>
-                        <input type="text" id="metaNome" name="metaNome" required>
-        
-                        <label for="metaValor">Quanto você quer reservar para essa meta?</label>
-                        <input type="number" id="metaValor" name="metaValor" step="0.01" required>
-        
-                        <label for="metaPrazo">Qual é o prazo para alcançar essa meta?</label>
-                        <input type="date" id="metaPrazo" name="metaPrazo" required>
-        
-                        <input type="submit" value="Enviar Meta">
-                    </form>
-                </div>
-            </div>
-        
-            <button class="button" onclick="abrirPopupAdicionarMeta()">Adicionar Meta</button>
-        
+            <button class="button adicionar-meta" onclick="abrirPopupAdicionarMeta()">+ Adicionar Meta</button>
             <ul class="metas-list" id="listaMetas"></ul>
         </div>
     </div>
-    
+
+    <!-- Popup para Adicionar ou Editar Meta -->
+    <div class="popup" id="popupAdicionarMeta">
+        <div class="popup-content">
+            <span class="close-icon" onclick="fecharPopup()">&times;</span>
+            <h2>Nova Meta</h2>
+            <form id="formMeta" onsubmit="return adicionarMeta()">
+                <label for="metaNome">Nome da Meta</label>
+                <input type="text" id="metaNome" required>
+                <label for="metaValor">Valor da Meta (R$)</label>
+                <input type="number" id="metaValor" step="0.01" required>
+                <label for="metaPrazo">Data Limite</label>
+                <input type="date" id="metaPrazo" required>
+                <button type="submit" class="button">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup para Registrar Pagamento -->
+    <div class="popup" id="popupPagamento" style="display:none;">
+        <div class="popup-content">
+            <span class="close-icon" onclick="fecharPopupPagamento()">&times;</span>
+            <h2>Registrar Pagamento</h2>
+            <label for="valorPago">Valor Pago (R$)</label>
+            <input type="number" id="valorPago" step="0.01" required>
+            <button class="button" onclick="registrarPagamento()">Registrar</button>
+        </div>
+    </div>
 
     <script>
-        let metaEdicaoIndex = -1; // Para saber qual meta está sendo editada
-
+        let metas = [];
+    
+        // Função para calcular projeção de saldo
         function calcularProjecao() {
             const valor = parseFloat(document.getElementById('valor').value);
             const periodo = document.getElementById('periodo').value;
             const anos = parseInt(document.getElementById('anos').value);
-
-            if (isNaN(valor) || isNaN(anos)) {
-                alert('Por favor, preencha todos os campos corretamente.');
+            if (isNaN(valor) || isNaN(anos) || anos <= 0) {
+                alert('Preencha todos os campos corretamente.');
                 return;
             }
-
-            let meses;
-            let unidadeTempo;
-            if (periodo === 'mes') {
-                meses = anos * 1;  // Se for por mês, o número de meses é igual ao valor de 'anos'
-                unidadeTempo = 'meses';
-            } else if (periodo === 'ano') {
-                meses = anos * 12;  // Se for por ano, convertendo para meses
-                unidadeTempo = 'ano(s)';
-            }
-
-            const saldo = valor * meses;
-
-            const resultado = document.getElementById('resultado');
-            const valorResultado = document.getElementById('valorResultado');
-            valorResultado.innerText = `Você terá aproximadamente R$ ${saldo.toFixed(2)} ao final de ${anos} ${unidadeTempo}.`;
-            resultado.style.display = 'block';
+    
+            let meses = periodo === 'ano' ? anos * 12 : anos;
+            let saldo = valor * meses;
+            document.getElementById('valorResultado').innerText = `Você terá aproximadamente R$ ${saldo.toFixed(2)} em ${anos} ${periodo === 'ano' ? 'anos' : 'meses'}.`;
+            document.getElementById('resultado').style.display = 'block';
         }
+    
+        // Função para abrir popup de adicionar meta
         function abrirPopupAdicionarMeta() {
-            document.getElementById("popupAdicionarMeta").style.display = "block";
-        }function fecharPopup() {
+            document.getElementById("popupAdicionarMeta").style.display = "flex";
+            // Limpa os campos de entrada do formulário ao abrir o popup para adicionar nova meta
+            document.getElementById("metaNome").value = '';
+            document.getElementById("metaValor").value = '';
+            document.getElementById("metaPrazo").value = '';
+            
+            // Remove o atributo de edição (indicando que está criando nova meta)
+            document.getElementById("popupAdicionarMeta").removeAttribute("data-meta-index");
+        }
+    
+        // Função para fechar o popup
+        function fecharPopup() {
             document.getElementById("popupAdicionarMeta").style.display = "none";
         }
+    
+        // Função para adicionar nova meta
         function adicionarMeta() {
-            var metaNome = document.getElementById("metaNome").value;
-            var metaValor = document.getElementById("metaValor").value;
-            var metaPrazo = document.getElementById("metaPrazo").value;
-            var metaId = document.getElementById("modal_meta_id").value;
-        
-            if (metaId !== "") {
-                var meta = document.getElementById("listaMetas").children[metaId];
-                meta.children[0].textContent = `Meta: ${metaNome} - Valor: ${metaValor} - Prazo: ${metaPrazo}`;
-            } else {
-                var listaMetas = document.getElementById("listaMetas");
-                var novaMeta = document.createElement("li");
-                novaMeta.innerHTML = `
-                    <span>Meta: ${metaNome} - Valor: ${metaValor} - Prazo: ${metaPrazo}</span>
-                    <button class="button-editar" onclick="editarMeta(${listaMetas.children.length})">Editar</button>
-                    <button class="button-excluir" onclick="excluirMeta(${listaMetas.children.length})">Excluir</button>
-                `;
-        
-                listaMetas.appendChild(novaMeta);
-            }
-        
+            let nome = document.getElementById("metaNome").value;
+            let valor = parseFloat(document.getElementById("metaValor").value);
+            let prazo = document.getElementById("metaPrazo").value;
+            let listaMetas = document.getElementById("listaMetas");
+    
+            // Adicionando nova meta
+            let novaMeta = {
+                nome,
+                valor,
+                prazo,
+                valorGuardado: 0,
+                valorRestante: valor
+            };
+    
+            metas.push(novaMeta);
+            atualizarListaMetas();
             fecharPopup();
-        
             return false;
         }
+    
+        // Função para editar uma meta existente
         function editarMeta(index) {
-            var meta = document.getElementById("listaMetas").children[index];
-            var metaNome = meta.children[0].textContent.split(":")[1].trim();
-            var metaValor = meta.children[0].textContent.split(":")[2].trim();
-            var metaPrazo = meta.children[0].textContent.split(":")[3].trim();
-        
-            document.getElementById("metaNome").value = metaNome;
-            document.getElementById("metaValor").value = metaValor;
-            document.getElementById("metaPrazo").value = metaPrazo;
-        
-            document.getElementById("modal_meta_id").value = index;
-        
+            let meta = metas[index];
+            document.getElementById("popupAdicionarMeta").setAttribute("data-meta-index", index);
+            document.getElementById("metaNome").value = meta.nome;
+            document.getElementById("metaValor").value = meta.valor;
+            document.getElementById("metaPrazo").value = meta.prazo;
             abrirPopupAdicionarMeta();
         }
-        
-        function excluirMeta(index) {
-            var meta = document.getElementById("listaMetas").children[index];
-            meta.remove();
+    
+        // Função para salvar a edição da meta
+        function salvarEdicao() {
+            let index = document.getElementById("popupAdicionarMeta").getAttribute("data-meta-index");
+    
+            // Se o índice não estiver presente, significa que estamos tentando adicionar uma nova meta
+            if (index === null) {
+                return adicionarMeta(); // Se não houver índice, cria uma nova meta
+            }
+    
+            // Caso contrário, é uma edição de meta existente
+            let meta = metas[index];
+            
+            // Atualizando os dados da meta
+            meta.nome = document.getElementById("metaNome").value;
+            meta.valor = parseFloat(document.getElementById("metaValor").value);
+            meta.prazo = document.getElementById("metaPrazo").value;
+            meta.valorRestante = meta.valor - meta.valorGuardado;  // Atualizando o valor restante
+    
+            // Atualizando a meta na lista
+            metas[index] = meta;
+            atualizarListaMetas();
+            
+            // Fechar o modal de edição
+            fecharPopup();
         }
-
+    
+        // Função para atualizar lista de metas
+        function atualizarListaMetas() {
+            let listaMetas = document.getElementById("listaMetas");
+            listaMetas.innerHTML = '';
+            metas.forEach((meta, index) => {
+                let metaElemento = document.createElement("li");
+                metaElemento.innerHTML = `
+                    <span>${meta.nome} - R$ ${meta.valor.toFixed(2)} até ${meta.prazo}</span>
+                    <span>Valor Guardado: R$ ${meta.valorGuardado.toFixed(2)}</span>
+                    <span>Valor Restante: R$ ${meta.valorRestante.toFixed(2)}</span>
+                    <button class="button-editar" onclick="editarMeta(${index})">Editar</button>
+                    <button class="button-registrar" onclick="abrirPopupPagamento(${index})">Registrar</button>
+                    <button class="button-excluir" onclick="excluirMeta(${index})">Excluir</button>
+                `;
+                listaMetas.appendChild(metaElemento);
+            });
+        }
+    
+        // Função para abrir popup de registrar pagamento
+        function abrirPopupPagamento(index) {
+            let meta = metas[index];
+            document.getElementById("popupPagamento").style.display = "flex";
+            // Salvar o índice da meta no modal para referência
+            document.getElementById("popupPagamento").setAttribute("data-meta-index", index);
+        }
+    
+        // Função para registrar o pagamento
+        function registrarPagamento() {
+            let index = document.getElementById("popupPagamento").getAttribute("data-meta-index");
+            let valorPago = parseFloat(document.getElementById("valorPago").value);
+            let meta = metas[index];
+    
+            if (isNaN(valorPago) || valorPago <= 0) {
+                alert('Preencha o valor pago corretamente.');
+                return;
+            }
+    
+            // Atualizar o valor guardado e o valor restante
+            meta.valorGuardado += valorPago;
+            meta.valorRestante = meta.valor - meta.valorGuardado;
+    
+            // Atualizando a meta na lista
+            metas[index] = meta;
+            atualizarListaMetas();
+    
+            // Fechar o modal e limpar o campo de pagamento
+            fecharPopupPagamento();
+            document.getElementById("valorPago").value = '';
+        }
+    
+        // Função para fechar o modal de pagamento
+        function fecharPopupPagamento() {
+            document.getElementById("popupPagamento").style.display = "none";
+        }
+    
+        // Função para excluir uma meta
+        function excluirMeta(index) {
+            metas.splice(index, 1);
+            atualizarListaMetas();
+        }
     </script>
+    
+    
+        
 </body>
 
 </html>

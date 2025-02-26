@@ -1,208 +1,192 @@
+/* Reset global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
 
-        /* Resetando estilos padrões */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+/* Layout geral */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+}
 
-        /* Estilos gerais */
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f7fb;
-            color: #333;
-            padding: 20px;
-            display: space-evenl;
-            justify-content: center;
-            height: 100vh;
-            flex-direction: column;
-        }
+/* Container principal */
+.container {
+    display: flex;
+    gap: 30px; /* Maior espaçamento entre blocos */
+    max-width: 1100px; /* Aumentei a largura total */
+    width: 100%;
+}
 
-        .container {
-            display: flex;
-            gap: 30px;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            width: 100%;
-        }
+/* Blocos principais */
+.form-block,
+.metas-block {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    width: 50%; /* Aumentei a largura */
+}
 
-        /* Estilos dos blocos */
-        .form-block,
-        .metas-block {
-            background-color: #ffffff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            flex: 1;
-            min-width: 280px;
-            transition: transform 0.3s ease;
-        }
+/* Títulos */
+h1 {
+    font-size: 22px; /* Maior destaque */
+    text-align: center;
+    color: #2543F4;
+    margin-bottom: 20px;
+}
 
-        .form-block:hover,
-        .metas-block:hover {
-            transform: translateY(-5px);
-        }
+/* Listas de informações */
+.info-list {
+    list-style: none;
+    padding: 10px 0;
+}
 
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            color: #2543F4;
-            margin-bottom: 20px;
-        }
+.info-list li {
+    font-size: 16px;
+    padding: 8px 0;
+}
 
-        /* Estilos do botão */
-        .button {
-            background-color: #2543F4;
-            color: #fff;
-            padding: 12px 25px;
-            border-radius: 30px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-            text-transform: uppercase;
-        }
+/* Formulários */
+.form-group {
+    margin-bottom: 20px; /* Aumentei o espaçamento */
+}
 
-        .button i {
-            margin-left: 10px;
-        }
+label {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 8px;
+}
 
-        .button:hover {
-            background-color: #1c34c4;
-        }
+input,
+select {
+    width: 100%;
+    padding: 12px; /* Mais altura para inputs */
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
 
-        /* Estilos dos campos de formulário */
-        .form-group {
-            margin-bottom: 20px;
-        }
+/* Botões */
+.button {
+    background: #2543F4;
+    color: #fff;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    border: none;
+    transition: background 0.3s;
+}
 
-        label {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 8px;
-        }
+.button:hover {
+    background: #1c34c4;
+}
 
-        input[type="number"],
-        select,
-        input[type="date"],
-        input[type="text"] {
-            width: 100%;
-            padding: 12px 18px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            background-color: #f9f9f9;
-            transition: border-color 0.3s;
-        }
+/* Botão de Editar */
+.button-editar {
+    background: #5bc0de;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
 
-        input[type="number"]:focus,
-        select:focus,
-        input[type="date"]:focus,
-        input[type="text"]:focus {
-            border-color: #2543F4;
-        }
+.button-editar:hover {
+    background: #31b0d5;
+}
 
-        /* Estilos do resultado */
-        .result {
-            background-color: #e3f7ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 18px;
-            color: #1e3c72;
-        }
+/* Botão de Registrar */
+.button-registrar {
+    background: #5cb85c;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
 
-        .metas-list {
-            margin-top: 20px;
-            list-style: none;
-        }
+.button-registrar:hover {
+    background: #4cae4c;
+}
 
-        .metas-list li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
+/* Botão de Excluir */
+.button-excluir {
+    background: #d9534f;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-        .metas-list li:hover {
-            background-color: #f0f8ff;
-        }
+.button-excluir:hover {
+    background: #c9302c;
+}
 
-        .metas-list button {
-            background-color: #2543F4;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+/* Resultado da projeção */
+.result {
+    display: none;
+    background: #f8f9ff;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 5px solid #2543F4;
+    margin-top: 15px;
+}
 
-        .metas-list button:hover {
-            background-color: #1c34c4;
-        }
+/* Lista de Metas */
+.metas-list {
+    list-style: none;
+    padding: 10px 0;
+}
 
-        .metas-list button.edit {
-            background-color: #ff9800;
-        }
+.metas-list li {
+    background: #f8f9ff;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+}
 
-        .metas-list button.edit:hover {
-            background-color: #e68900;
-        }
+/* Popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    justify-content: center;
+    align-items: center;
+}
 
-        /* Estilos do popup */
-        .popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
+.popup-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    width: 350px;
+    text-align: center;
+}
 
-        .adicionar-meta {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            width: 400px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            position: relative;
-        }
-
-        .adicionar-meta span.close-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .form-block,
-            .metas-block {
-                width: 90%;
-                max-width: 600px;
-            }
-        }
-  
+.close-icon {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+}
